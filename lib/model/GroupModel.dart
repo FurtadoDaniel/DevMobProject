@@ -24,12 +24,15 @@ class Group{
     return map;
   }
 
-  save() async {
+  save() {
     Firestore db = Firestore.instance;
-    await db.collection("groups")
+    db.collection("groups")
         .document( this.Id )
         .setData( this.toMap() );
+
+    return;
   }
+
 
   //setters
   set Name(String value) {

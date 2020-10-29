@@ -13,15 +13,30 @@ class GroupForm extends StatefulWidget {
 
 class _GroupForm extends State<GroupForm> {
 
+  _GroupForm(){
+    _getCurrentUser();
+  }
+
   //Controladores
+  TextEditingController _OwnerController;
   TextEditingController _NameController = TextEditingController(text: "New group");
 
   _save(){
 
     Group group = Group();
     group.Name = _NameController.text;
-    group.Owner = Season.getCurrentUser();
+    group.Owner = _OwnerController.text;
     group.save();
+
+    Navigator.pushNamedAndRemoveUntil(
+        context, "/home", (_)=>false
+    );
+  }
+
+  _getCurrentUser() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    this._OwnerController = TextEditingController(text: usuarioLogado.uid);
   }
 
   Widget build(BuildContext context){

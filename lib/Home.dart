@@ -14,6 +14,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   TabController _tabController;
   List<String> itensMenu = [
+    // temporaly
+    "Criar grupo",
+
     "Configurações", "Deslogar"
   ];
   String _emailUsuario= "";
@@ -56,6 +59,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   _escolhaMenuItem(String itemEscolhido){
 
     switch( itemEscolhido ){
+      case "Criar grupo":
+        Navigator.pushNamed(context, "/group");
+        break;
       case "Configurações":
         Navigator.pushNamed(context, "/configuracoes");
         break;

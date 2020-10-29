@@ -6,6 +6,8 @@ import 'Home.dart';
 import 'Login.dart';
 import 'Mensagens.dart';
 
+import 'telas/GroupForm.dart';
+
 class RouteGenerator {
 
   static Route<dynamic> generateRoute(RouteSettings settings){
@@ -37,6 +39,11 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => Mensagens(args)
         );
+      case "/group" :
+        return MaterialPageRoute(
+          builder: (_) => GroupForm()
+        );
+
       default:
         _erroRota();
     }
