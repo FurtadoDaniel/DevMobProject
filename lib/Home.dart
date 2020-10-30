@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'telas/AbaContatos.dart';
 import 'telas/AbaConversas.dart';
+import 'telas/GroupTab.dart';
 import 'dart:io';
 import 'Login.dart';
 
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     _verificarUsuarioLogado();
     _recuperarDadosUsuario();
     _tabController = TabController(
-        length: 2,
+        length: 3,
         vsync: this
     );
 
@@ -99,7 +100,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           indicatorColor: Platform.isIOS ? Colors.grey[400] : Colors.white,
           tabs: <Widget>[
             Tab(text: "Conversas",),
-            Tab(text: "Contatos",)
+            Tab(text: "Contatos",),
+            Tab(text: "Grupos")
           ],
         ),
         actions: <Widget>[
@@ -120,7 +122,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         controller: _tabController,
         children: <Widget>[
           AbaConversas(),
-          AbaContatos()
+          AbaContatos(),
+          GroupTab()
         ],
       ),
     );

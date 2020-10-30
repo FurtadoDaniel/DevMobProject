@@ -18,7 +18,7 @@ class _AbaContatosState extends State<AbaContatos> {
     Firestore db = Firestore.instance;
 
     QuerySnapshot querySnapshot =
-        await db.collection("usuarios").getDocuments();
+    await db.collection("usuarios").getDocuments();
 
     List<Usuario> listaUsuarios = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
