@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:whatsuff/telas/ListarMembros.dart';
 
 import 'Cadastro.dart';
 import 'Configuracoes.dart';
@@ -42,6 +43,10 @@ class RouteGenerator {
       case "/group" :
         return MaterialPageRoute(
           builder: (_) => GroupForm()
+        );
+      case "/listamembros" :
+        return MaterialPageRoute(
+          builder: (_) => ListarMembros()
         );
 
       default:
