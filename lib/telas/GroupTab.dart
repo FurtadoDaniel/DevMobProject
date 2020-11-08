@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:whatsuff/telas/GroupChat.dart';
+import 'package:whatsuff/telas/GroupForm.dart';
 import '../model/GroupModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,28 +13,25 @@ class GroupTab extends StatefulWidget {
 }
 
 class _GroupTab extends State<GroupTab> {
-
   TextEditingController _OwnerController;
 
-  _GroupTab(){
+  _GroupTab() {
     _getCurrentUser();
   }
 
   Future<List<Group>> _getGroups() async {
     Firestore db = Firestore.instance;
 
-    QuerySnapshot querySnapshot =
-    await db.collection("groups").getDocuments();
+    QuerySnapshot querySnapshot = await db.collection("groups").getDocuments();
 
     List<Group> groups = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
-
       var data = item.data;
-      if( data["owner"] != this._OwnerController.text ) continue;
+      if (data["owner"] != this._OwnerController.text) continue;
 
       Group group = Group.IfId(data["id"]);
       group.ImagePath = data["image"] != null ? data["image"] : "";
-      group.Name= data["name"];
+      group.Name = data["name"];
 
       groups.add(group);
     }
@@ -73,30 +72,28 @@ class _GroupTab extends State<GroupTab> {
             return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (_, indice) {
-
                   List<Group> listaItens = snapshot.data;
                   Group grupo = listaItens[indice];
 
                   return ListTile(
-                    /*onTap: (){
-                      Navigator.pushNamed(
-                          context,
-                          "/mensagens",
-                          arguments: usuario
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GroupChat(grupo)),
                       );
-                    },*/
+                    },
                     contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
                     leading: CircleAvatar(
-                      maxRadius: 30,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: grupo.Image != null ?
-                                          NetworkImage(grupo.ImagePath) :
-                                          null
-                    ),
+                        maxRadius: 30,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: grupo.Image != null
+                            ? NetworkImage(grupo.ImagePath)
+                            : null),
                     title: Text(
-                      grupo.Name==null?"":grupo.Name,
+                      grupo.Name == null ? "" : grupo.Name,
                       style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   );
                 });

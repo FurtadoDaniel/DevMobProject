@@ -1,8 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Mensagem {
-
+  String _idGrupo;
   String _idUsuario;
   String _mensagem;
   String _urlImagem;
@@ -13,18 +12,34 @@ class Mensagem {
 
   Mensagem();
 
-  Map<String, dynamic> toMap(){
-
+  Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      "idUsuario" : this.idUsuario,
-      "mensagem" : this.mensagem,
-      "timeStamp" : this.timeStamp,
-      "urlImagem" : this.urlImagem,
-      "tipo" : this.tipo,
+      "idUsuario": this.idUsuario,
+      "mensagem": this.mensagem,
+      "timeStamp": this.timeStamp,
+      "urlImagem": this.urlImagem,
+      "tipo": this.tipo,
     };
 
     return map;
+  }
 
+  Map<String, dynamic> toGroupMap() {
+    Map<String, dynamic> map = {
+      "idGrupo": this.idGrupo,
+      "idUsuario": this.idUsuario,
+      "mensagem": this.mensagem,
+      "timeStamp": this.timeStamp,
+      "urlImagem": this.urlImagem,
+      "tipo": this.tipo,
+    };
+
+    return map;
+  }
+
+  String get idGrupo => _idGrupo;
+  set idGrupo(String value) {
+    _idGrupo = value;
   }
 
   String get tipo => _tipo;
@@ -35,7 +50,8 @@ class Mensagem {
 
   Timestamp get timeStamp => _timeStamp; //LEK
 
-  set timeStamp(Timestamp value) { //LEK
+  set timeStamp(Timestamp value) {
+    //LEK
     _timeStamp = value;
   }
 
@@ -56,6 +72,4 @@ class Mensagem {
   set idUsuario(String value) {
     _idUsuario = value;
   }
-
-
 }
