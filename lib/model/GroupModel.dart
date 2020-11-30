@@ -4,29 +4,32 @@ import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-class Group{
+import 'package:whatsuff/model/Usuario.dart';
 
+class Group {
   //Atributs
   String _Id = Uuid().v4();
   String _Name;
   File _Image;
   String _ImageURL;
   String _Owner;
+  List<Usuario> _Membros;
 
   //Initialize
   Group();
 
-  Group.IfId (String id){
+  Group.IfId(String id) {
     this._Id = id;
   }
 
   //Mapping for serialization
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      "id" : this.Id,
-      "name" : this.Name,
-      "image" : this._ImageURL,
-      "owner" : this.Owner
+      "id": this.Id,
+      "name": this.Name,
+      "image": this._ImageURL,
+      "owner": this.Owner,
+      "membros": this.Membros
     };
 
     return map;
@@ -34,9 +37,7 @@ class Group{
 
   save() {
     Firestore db = Firestore.instance;
-    db.collection("groups")
-        .document( this.Id )
-        .setData( this.toMap() );
+    db.collection("groups").document(this.Id).setData(this.toMap());
 
     _uploadImagem();
 
@@ -44,31 +45,25 @@ class Group{
   }
 
   Future _uploadImagem() async {
-
     FirebaseStorage storage = FirebaseStorage.instance;
     StorageReference pastaRaiz = storage.ref();
-    StorageReference arquivo = pastaRaiz
-        .child("groups")
-        .child(this.Id + ".jpg");
+    StorageReference arquivo =
+        pastaRaiz.child("groups").child(this.Id + ".jpg");
 
     //Upload da imagem
     StorageUploadTask task = arquivo.putFile(this._Image);
-    task.onComplete.then((StorageTaskSnapshot snapshot){
+    task.onComplete.then((StorageTaskSnapshot snapshot) {
       _updateImageURL(snapshot);
     });
   }
 
-  Future _updateImageURL(StorageTaskSnapshot snapshot)  async {
+  Future _updateImageURL(StorageTaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
     Firestore db = Firestore.instance;
 
-    Map<String, dynamic> data = {
-      "image" : url
-    };
+    Map<String, dynamic> data = {"image": url};
 
-    db.collection("groups")
-        .document(this.Id)
-        .updateData( data );
+    db.collection("groups").document(this.Id).updateData(data);
   }
 
   //setters
@@ -84,15 +79,19 @@ class Group{
     _Owner = value;
   }
 
-  set ImagePath(String value){
+  set ImagePath(String value) {
     _ImageURL = value;
+  }
+
+  set Membros(List<Usuario> value) {
+    _Membros = value;
   }
 
   //getters
   String get Name => _Name;
-  File get Image => _ImageURL != null ? File( _ImageURL) : null ;
-  String get ImagePath=> _ImageURL;
+  File get Image => _ImageURL != null ? File(_ImageURL) : null;
+  String get ImagePath => _ImageURL;
   String get Owner => _Owner;
   String get Id => _Id;
-
+  List<Usuario> get Membros => _Membros;
 }
