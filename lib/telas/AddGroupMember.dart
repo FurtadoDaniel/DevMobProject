@@ -27,7 +27,15 @@ class _AddGroupMemberState extends State<AddGroupMember> {
     List<Usuario> listaUsuarios = List();
     for (DocumentSnapshot item in querySnapshot.documents) {
       var dados = item.data;
-      if (dados["email"] == _emailUsuarioLogado) continue;
+      if (dados["email"] == _emailUsuarioLogado) {
+        Usuario adm = Usuario();
+        adm.idUsuario = item.documentID;
+        adm.email = dados["email"];
+        adm.nome = dados["nome"];
+        adm.urlImagem = dados["urlImagem"];
+        widget.grupo.Membros.add(adm);
+        continue;
+      }
 
       Usuario usuario = Usuario();
       usuario.idUsuario = item.documentID;
