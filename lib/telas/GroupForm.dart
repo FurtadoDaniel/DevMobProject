@@ -35,7 +35,7 @@ class _GroupForm extends State<GroupForm> {
     group.Name = _NameController.text;
     group.Owner = _OwnerController.text;
     group.Image = _imagem;
-
+    group.save();
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => AddGroupMember(group)));
   }

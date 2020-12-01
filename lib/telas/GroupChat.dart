@@ -26,6 +26,7 @@ class _GroupChatState extends State<GroupChat> {
   String _urlImagemRemetente = "blz2"; // Remetente eh o logado
   String _nomeRemetente = "blz2";
   static ImagePicker _imagePicker = null;
+  Usuario usuario = Usuario();
 
   Firestore db = Firestore.instance;
   TextEditingController _controllerGroupChat = TextEditingController();
@@ -52,7 +53,7 @@ class _GroupChatState extends State<GroupChat> {
       _salvarMensagem(_idUsuarioLogado, _idGrupo, mensagem);
 
       //Salvar conversa
-      //_salvarConversa(mensagem);
+      _salvarConversa(mensagem);
     }
   }
 
@@ -86,6 +87,92 @@ class _GroupChatState extends State<GroupChat> {
 
     //Limpa texto
     _controllerGroupChat.clear();
+  }
+
+  _salvarConversa(Mensagem msg) {
+    //Salvar conversa PARA remetente
+    Conversa cRemetente = Conversa();
+    cRemetente.idRemetente = _idUsuarioLogado;
+    cRemetente.idDestinatario = _idGrupo;
+    cRemetente.mensagem = msg.mensagem;
+    cRemetente.nome = usuario
+        .nome; //_nomeDestinatario;   // tem que ficar o nome do destinatario
+    //print("cRemetente.nome="+cRemetente.nome);
+    cRemetente.timeStamp = Timestamp.now(); //"LEK
+    cRemetente.caminhoFoto = usuario
+        .urlImagem; //_urlImagemDestinatario;  // tem que ficar a imagem do destinatario
+    //print("cRemetente.caminhoFoto="+cRemetente.caminhoFoto);
+    cRemetente.tipoMensagem = msg.tipo;
+    cRemetente.salvar();
+
+    //Salvar conversa PARA o destinatario
+    Conversa cDestinatario = Conversa();
+    cDestinatario.idRemetente =
+        _idGrupo; // troca para que o destinatario possa recuperar a ultima mesmo nao sido criada por ele
+    cDestinatario.idDestinatario = _idUsuarioLogado;
+    cDestinatario.mensagem = msg.mensagem;
+
+    //_recuperarDadosRemetente();
+    cDestinatario.nome = _nomeRemetente; // vai exibir no nome do remetente
+    //print("cDestinatario.nome="+cDestinatario.nome);
+    cDestinatario.timeStamp = Timestamp.now(); //LEK
+    cDestinatario.caminhoFoto =
+        _urlImagemRemetente; // vai exibir a imagem do remetente
+    //print("cDestinatario.caminhoFoto="+cDestinatario.caminhoFoto);
+    cDestinatario.tipoMensagem = msg.tipo;
+    cDestinatario.salvar();
+  }
+
+  _recuperarDadosUsuario() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    _idUsuarioLogado = usuarioLogado.uid;
+
+    //Firestore db = Firestore.instance; // ja' eh atributo
+    DocumentSnapshot snapshot =
+        await db.collection("usuarios").document(_idUsuarioLogado).get();
+
+    Map<String, dynamic> dados = snapshot.data;
+
+    if (dados["urlImagem"] != null) {
+      setState(() {
+        _urlImagemRemetente = dados["urlImagem"];
+        print("recuperou " + _urlImagemRemetente);
+        usuario.urlImagem = _urlImagemRemetente;
+      });
+    }
+    if (dados["nome"] != null) {
+      setState(() {
+        _nomeRemetente = dados["nome"];
+        print("recuperou " + _nomeRemetente);
+        usuario.nome = _nomeRemetente;
+      });
+    }
+
+    _adicionarListenerMensagens();
+  }
+
+  Stream<QuerySnapshot> _adicionarListenerMensagens() {
+    final stream = db
+        .collection("mensagens")
+        .document(_idUsuarioLogado)
+        .collection(_idGrupo)
+        .orderBy("timeStamp") //LEK
+        .snapshots();
+
+    stream.listen((dados) {
+      _controller.add(dados);
+      Timer(Duration(seconds: 1), () {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //_recuperarDadosRemetente();
+    _recuperarDadosUsuario();
   }
 
   @override
