@@ -43,7 +43,6 @@ class _AddGroupMemberState extends State<AddGroupMember> {
 
   _insereUsuarioGrupo(Usuario usuario) async {
     widget.grupo.Membros.add(usuario);
-    widget.grupo.save();
   }
 
   _recuperarDadosUsuario() async {
@@ -61,50 +60,71 @@ class _AddGroupMemberState extends State<AddGroupMember> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Usuario>>(
-      future: _recuperarContatos(),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-            return Center(
-              child: Column(
-                children: <Widget>[
-                  Text("Carregando contatos"),
-                  CircularProgressIndicator()
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Adicionar Membros"),
+        elevation: Platform.isIOS ? 0 : 4,
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                widget.grupo.save();
+              },
+              child: Icon(
+                Icons.check,
+                size: 26.0,
               ),
-            );
-            break;
-          case ConnectionState.active:
-          case ConnectionState.done:
-            return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (_, indice) {
-                  List<Usuario> listaItens = snapshot.data;
-                  Usuario usuario = listaItens[indice];
-
-                  return ListTile(
-                    onTap: () {
-                      _insereUsuarioGrupo(usuario);
-                    },
-                    contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    leading: CircleAvatar(
-                        maxRadius: 30,
-                        backgroundColor: Colors.grey,
-                        backgroundImage: usuario.urlImagem != null
-                            ? NetworkImage(usuario.urlImagem)
-                            : null),
-                    title: Text(
-                      usuario.nome == null ? "" : usuario.nome,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                  );
-                });
-            break;
-        }
-      },
+            ),
+          )
+        ],
+      ),
+      body: FutureBuilder<List<Usuario>>(
+        future: _recuperarContatos(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return Center(
+                child: Column(
+                  children: <Widget>[
+                    Text("Carregando contatos"),
+                    CircularProgressIndicator()
+                  ],
+                ),
+              );
+              break;
+            case ConnectionState.active:
+            case ConnectionState.done:
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (_, indice) {
+                    List<Usuario> listaItens = snapshot.data;
+                    Usuario usuario = listaItens[indice];
+                    return Material(
+                      child: ListTile(
+                        onTap: () {
+                          _insereUsuarioGrupo(usuario);
+                        },
+                        contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                        leading: CircleAvatar(
+                            maxRadius: 30,
+                            backgroundColor: Colors.grey,
+                            backgroundImage: usuario.urlImagem != null
+                                ? NetworkImage(usuario.urlImagem)
+                                : null),
+                        title: Text(
+                          usuario.nome == null ? "" : usuario.nome,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    );
+                  });
+              break;
+          }
+        },
+      ),
     );
   }
 }
