@@ -13,7 +13,7 @@ class Group {
   File _Image;
   String _ImageURL;
   String _Owner;
-  List<Usuario> _Membros;
+  List<Usuario> _Membros = new List<Usuario>();
 
   //Initialize
   Group();
@@ -38,8 +38,7 @@ class Group {
   save() {
     Firestore db = Firestore.instance;
     db.collection("groups").document(this.Id).setData(this.toMap());
-
-    _uploadImagem();
+    if (this.Image != null) _uploadImagem();
 
     return;
   }

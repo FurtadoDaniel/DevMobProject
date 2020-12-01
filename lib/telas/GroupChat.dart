@@ -21,8 +21,6 @@ class GroupChat extends StatefulWidget {
 }
 
 class _GroupChatState extends State<GroupChat> {
-  //File _imagem;
-  //bool _subindoImagem = false;
   String _idUsuarioLogado;
   String _idGrupo;
   String _urlImagemRemetente = "blz2"; // Remetente eh o logado

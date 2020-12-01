@@ -28,12 +28,6 @@ class _AddGroupMemberState extends State<AddGroupMember> {
     for (DocumentSnapshot item in querySnapshot.documents) {
       var dados = item.data;
       if (dados["email"] == _emailUsuarioLogado) {
-        Usuario adm = Usuario();
-        adm.idUsuario = item.documentID;
-        adm.email = dados["email"];
-        adm.nome = dados["nome"];
-        adm.urlImagem = dados["urlImagem"];
-        widget.grupo.Membros.add(adm);
         continue;
       }
 
@@ -51,6 +45,7 @@ class _AddGroupMemberState extends State<AddGroupMember> {
 
   _insereUsuarioGrupo(Usuario usuario) async {
     widget.grupo.Membros.add(usuario);
+    print("Adicionou");
   }
 
   _recuperarDadosUsuario() async {
@@ -78,6 +73,8 @@ class _AddGroupMemberState extends State<AddGroupMember> {
             child: GestureDetector(
               onTap: () {
                 widget.grupo.save();
+                Navigator.pushNamedAndRemoveUntil(
+                    context, "/home", (_) => false);
               },
               child: Icon(
                 Icons.check,
